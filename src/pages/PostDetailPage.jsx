@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { formatDate } from '../utils/features'
 import { deletePost, getPostDetail } from '../apis/postApi'
 import { LikeButton } from '../components/LikeButton'
+import { Comments } from '../components/Comments'
 
 export const PostDetailPage = () => {
   const { postId } = useParams()
@@ -72,7 +73,9 @@ export const PostDetailPage = () => {
         <Link to="/">목록으로</Link>
       </section>
 
-      <section className={css.commentlist}>댓글목록</section>
+      <section className={css.commentlist}>
+        <Comments postId={postId} />
+      </section>
     </main>
   )
 }

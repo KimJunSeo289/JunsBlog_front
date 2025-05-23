@@ -40,7 +40,7 @@ export const LikeButton = ({ postId, likes, className = '' }) => {
       }
     }
   }
-  
+
   return (
     <span className={className}>
       <span onClick={handleLikeToggle} style={{ cursor: 'pointer' }}>
