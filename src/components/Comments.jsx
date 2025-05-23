@@ -1,17 +1,19 @@
 import { useSelector } from 'react-redux'
 import css from './comments.module.css'
 import { useEffect, useState } from 'react'
-import { createComment, getComments } from '../apis/commentApi'
+import { createComment, getComments, updateComment } from '../apis/commentApi'
 import { Link } from 'react-router-dom'
+import { formatDate } from '../utils/features'
+import { deleteComment } from '../apis/postApi'
 
 export const Comments = ({ postId }) => {
-  console.log('Comments : postId:', postId)
   const userInfo = useSelector(state => state.user.user)
-  console.log('Comments : userInfo:', userInfo)
 
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [comments, setComments] = useState([])
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editContent, setEditContent] = useState('')
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -57,6 +59,58 @@ export const Comments = ({ postId }) => {
     }
   }
 
+  const handleDelete = async commentId => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      try {
+        setIsLoading(true)
+        const response = await deleteComment(commentId)
+        console.log('댓글 삭제 성공:', response)
+        setComments(prevComments => prevComments.filter(comment => comment._id !== commentId))
+        setIsLoading(false)
+      } catch (error) {
+        console.error('댓글 삭제 실패:', error)
+        alert('댓글 삭제에 실패했습니다.')
+        setIsLoading(false)
+      }
+    }
+  }
+
+  const handleEditMode = comment => {
+    setEditingCommentId(comment._id)
+    setEditContent(comment.content)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null)
+    setEditContent('')
+  }
+
+  const handleUpdateComment = async commentId => {
+    if (!editContent) {
+      alert('댓글 내용을 입력하세요')
+      return
+    }
+    try {
+      setIsLoading(true)
+      const response = await updateComment(commentId, editContent)
+      console.log('댓글 수정 성공', response)
+
+      setComments(prevComments =>
+        prevComments.map(comment =>
+          comment._id === commentId ? { ...comment, content: editContent } : comment
+        )
+      )
+
+      setEditingCommentId(null)
+      setEditContent('')
+      setIsLoading(false)
+    } catch (error) {
+      console.error('댓글 수정 실패:', error)
+      alert('댓글 수정에 실패했습니다.')
+      setIsLoading(false)
+    }
+  }
+
   return (
     <section className={css.comments}>
       {userInfo.username ? (
@@ -78,19 +132,52 @@ export const Comments = ({ postId }) => {
       )}
 
       <ul>
-        {comments.map(comment => (
-          <li key={comment._id} className={css.list}>
-            <div className={css.commnet}>
-              <p className={css.author}>{comment.author}</p>
-              <p className={css.date}>{comment.createdAt}</p>
-              <p className={css.text}>{comment.content}</p>
-            </div>
-            <div className={css.btns}>
-              <button>수정</button>
-              <button>삭제</button>
-            </div>
+        {comments && comments.length > 0 ? (
+          comments.map(comment => (
+            <li key={comment._id} className={css.list}>
+              {editingCommentId === comment._id ? (
+                <>
+                  <div className={css.commnet}>
+                    <p className={css.author}>{comment.author}</p>
+                    <p className={css.date}>{formatDate(comment.createdAt)}</p>
+                    <textarea
+                      value={editContent}
+                      onChange={e => setEditContent(e.target.value)}
+                      className={css.text}
+                      disabled={isLoading}
+                    ></textarea>
+                  </div>
+                  <div className={css.btns}>
+                    <button onClick={() => handleUpdateComment(comment._id)} disabled={isLoading}>
+                      수정완료
+                    </button>
+                    <button onClick={handleCancelEdit} disabled={isLoading}>
+                      취소
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={css.commnet}>
+                    <p className={css.author}>{comment.author}</p>
+                    <p className={css.date}>{formatDate(comment.createdAt)}</p>
+                    <p className={css.text}>{comment.content}</p>
+                  </div>
+                  {userInfo.username === comment.author && (
+                    <div className={css.btns}>
+                      <button onClick={() => handleEditMode(comment)}>수정</button>
+                      <button onClick={() => handleDelete(comment._id)}>삭제</button>
+                    </div>
+                  )}
+                </>
+              )}
+            </li>
+          ))
+        ) : (
+          <li className={css.list}>
+            <p className={css.text}>등록된 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
           </li>
-        ))}
+        )}
       </ul>
     </section>
   )

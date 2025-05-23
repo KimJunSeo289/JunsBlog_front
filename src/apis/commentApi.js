@@ -12,3 +12,8 @@ export const getComments = async postId => {
   const response = await axios.get(`${API_URL}/comments/${postId}`)
   return response.data
 }
+
+export const updateComment = async (commentId, content) => {
+  const response = await axios.put(`${API_URL}/comments/${commentId}`, { content })
+  return response.data
+}

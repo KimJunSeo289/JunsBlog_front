@@ -42,3 +42,8 @@ export const toggleLike = async postId => {
   const response = await axios.post(`${API_URL}/like/${postId}`)
   return response.data
 }
+
+export const deleteComment = async commentId => {
+  const response = await axios.delete(`${API_URL}/comments/${commentId}`)
+  return response.data
+}
