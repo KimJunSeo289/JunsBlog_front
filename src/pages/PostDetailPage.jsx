@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { formatDate } from '../utils/features'
 import { deletePost, getPostDetail } from '../apis/postApi'
+import { LikeButton } from '../components/LikeButton'
 
 export const PostDetailPage = () => {
   const { postId } = useParams()
@@ -50,9 +51,7 @@ export const PostDetailPage = () => {
         <div className={css.info}>
           <p className={css.author}>{postInfo?.author}</p>
           <p className={css.date}>{formatDate(postInfo?.updatedAt)}</p>
-          <p>
-            <span>❤️</span> <span>30</span>
-          </p>
+          <p>{postInfo && <LikeButton postId={postId} likes={postInfo.likes} />}</p>
         </div>
         <div className={css.summary}>{postInfo?.summary}</div>
         {/* Quill 에디터로 작성된 HTML 콘텐츠를 렌더링 */}
