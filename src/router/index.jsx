@@ -4,6 +4,8 @@ import { RegisterPage } from '../pages/RegisterPage'
 import { LoginPage } from '../pages/LoginPage'
 import { CreatePost } from '../pages/CreatePost'
 import { PostListPage } from '../pages/PostListPage'
+import { PostDetailPage } from '../pages/PostDetailPage'
+import { EditePost } from '../pages/EditePost'
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +28,14 @@ export const router = createBrowserRouter([
       {
         path: '/createPost',
         element: <CreatePost />,
+      },
+      {
+        path: '/detail/:postId',
+        element: <PostDetailPage />,
+      },
+      {
+        path: '/edit/:postId',
+        element: <EditePost />,
       },
     ],
   },
