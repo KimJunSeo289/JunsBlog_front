@@ -1,114 +1,145 @@
 import { useSelector } from 'react-redux'
-import css from './comments.module.css'
-import { useEffect, useState } from 'react'
-import { createComment, getComments, updateComment } from '../apis/commentApi'
 import { Link } from 'react-router-dom'
+import { useEffect, useState, useCallback } from 'react'
+import { createComment, getComments, deleteComment, updateComment } from '../apis/commentApi'
 import { formatDate } from '../utils/features'
-import { deleteComment } from '../apis/postApi'
+import css from './comments.module.css'
 
 export const Comments = ({ postId }) => {
   const userInfo = useSelector(state => state.user.user)
-
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [comments, setComments] = useState([])
-  const [editingCommentId, setEditingCommentId] = useState(null)
-  const [editContent, setEditContent] = useState('')
+  const [editState, setEditState] = useState({ id: null, content: '' })
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const response = await getComments(postId)
+      setComments(response)
+    } catch (error) {
+      console.error('댓글 목록 조회 실패:', error)
+      alert('댓글 목록 조회에 실패했습니다.')
+    }
+  }, [postId])
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await getComments(postId)
-        console.log('댓글 목록 조회 성공:', response)
-        setComments(response)
-      } catch (error) {
-        console.error('댓글 목록 조회 실패:', error)
-        alert('댓글 목록 조회에 실패했습니다.')
-      }
-    }
     fetchComments()
-  }, [postId])
+  }, [fetchComments])
 
   const handleSubmit = async e => {
     e.preventDefault()
-    if (!newComment) {
+    if (!newComment.trim()) {
       alert('댓글을 입력하세요')
       return
     }
 
     try {
       setIsLoading(true)
-
       const commentData = {
         content: newComment,
         author: userInfo.username,
-        postId: postId,
+        postId,
       }
 
       const response = await createComment(commentData)
-      console.log('댓글 등록 성공:', response)
-
       setComments(prevComments => [response, ...prevComments])
       setNewComment('')
-
-      setIsLoading(false)
     } catch (error) {
       console.error('댓글 등록 실패:', error)
       alert('댓글 등록에 실패했습니다.')
+    } finally {
       setIsLoading(false)
     }
   }
 
   const handleDelete = async commentId => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      try {
-        setIsLoading(true)
-        const response = await deleteComment(commentId)
-        console.log('댓글 삭제 성공:', response)
-        setComments(prevComments => prevComments.filter(comment => comment._id !== commentId))
-        setIsLoading(false)
-      } catch (error) {
-        console.error('댓글 삭제 실패:', error)
-        alert('댓글 삭제에 실패했습니다.')
-        setIsLoading(false)
-      }
+    if (!window.confirm('정말 삭제하시겠습니까?')) return
+
+    try {
+      setIsLoading(true)
+      await deleteComment(commentId)
+      setComments(prevComments => prevComments.filter(comment => comment._id !== commentId))
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error)
+      alert('댓글 삭제에 실패했습니다.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleEditMode = comment => {
-    setEditingCommentId(comment._id)
-    setEditContent(comment.content)
+    setEditState({ id: comment._id, content: comment.content })
   }
 
   const handleCancelEdit = () => {
-    setEditingCommentId(null)
-    setEditContent('')
+    setEditState({ id: null, content: '' })
   }
 
   const handleUpdateComment = async commentId => {
-    if (!editContent) {
+    if (!editState.content.trim()) {
       alert('댓글 내용을 입력하세요')
       return
     }
+
     try {
       setIsLoading(true)
-      const response = await updateComment(commentId, editContent)
-      console.log('댓글 수정 성공', response)
+      await updateComment(commentId, editState.content)
 
       setComments(prevComments =>
         prevComments.map(comment =>
-          comment._id === commentId ? { ...comment, content: editContent } : comment
+          comment._id === commentId ? { ...comment, content: editState.content } : comment
         )
       )
-
-      setEditingCommentId(null)
-      setEditContent('')
-      setIsLoading(false)
+      handleCancelEdit()
     } catch (error) {
       console.error('댓글 수정 실패:', error)
       alert('댓글 수정에 실패했습니다.')
+    } finally {
       setIsLoading(false)
     }
+  }
+
+  const renderCommentItem = comment => {
+    const isEditing = editState.id === comment._id
+    const isAuthor = userInfo.username === comment.author
+
+    return (
+      <li key={comment._id} className={css.list}>
+        <div className={css.commnet}>
+          <p className={css.author}>{comment.author}</p>
+          <p className={css.date}>{formatDate(comment.createdAt)}</p>
+
+          {isEditing ? (
+            <textarea
+              value={editState.content}
+              onChange={e => setEditState({ ...editState, content: e.target.value })}
+              className={css.text}
+              disabled={isLoading}
+            />
+          ) : (
+            <p className={css.text}>{comment.content}</p>
+          )}
+        </div>
+
+        {isEditing ? (
+          <div className={css.btns}>
+            <button onClick={() => handleUpdateComment(comment._id)} disabled={isLoading}>
+              수정완료
+            </button>
+            <button onClick={handleCancelEdit} disabled={isLoading}>
+              취소
+            </button>
+          </div>
+        ) : (
+          isAuthor && (
+            <div className={css.btns}>
+              <button onClick={() => handleEditMode(comment)}>수정</button>
+              <button onClick={() => handleDelete(comment._id)}>삭제</button>
+            </div>
+          )
+        )}
+      </li>
+    )
   }
 
   return (
@@ -120,7 +151,7 @@ export const Comments = ({ postId }) => {
             onChange={e => setNewComment(e.target.value)}
             placeholder="댓글을 입력하세요"
             disabled={isLoading}
-          ></textarea>
+          />
           <button type="submit" disabled={isLoading}>
             {isLoading ? '등록 중...' : '댓글 등록'}
           </button>
@@ -132,47 +163,8 @@ export const Comments = ({ postId }) => {
       )}
 
       <ul>
-        {comments && comments.length > 0 ? (
-          comments.map(comment => (
-            <li key={comment._id} className={css.list}>
-              {editingCommentId === comment._id ? (
-                <>
-                  <div className={css.commnet}>
-                    <p className={css.author}>{comment.author}</p>
-                    <p className={css.date}>{formatDate(comment.createdAt)}</p>
-                    <textarea
-                      value={editContent}
-                      onChange={e => setEditContent(e.target.value)}
-                      className={css.text}
-                      disabled={isLoading}
-                    ></textarea>
-                  </div>
-                  <div className={css.btns}>
-                    <button onClick={() => handleUpdateComment(comment._id)} disabled={isLoading}>
-                      수정완료
-                    </button>
-                    <button onClick={handleCancelEdit} disabled={isLoading}>
-                      취소
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className={css.commnet}>
-                    <p className={css.author}>{comment.author}</p>
-                    <p className={css.date}>{formatDate(comment.createdAt)}</p>
-                    <p className={css.text}>{comment.content}</p>
-                  </div>
-                  {userInfo.username === comment.author && (
-                    <div className={css.btns}>
-                      <button onClick={() => handleEditMode(comment)}>수정</button>
-                      <button onClick={() => handleDelete(comment._id)}>삭제</button>
-                    </div>
-                  )}
-                </>
-              )}
-            </li>
-          ))
+        {comments.length > 0 ? (
+          comments.map(renderCommentItem)
         ) : (
           <li className={css.list}>
             <p className={css.text}>등록된 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
