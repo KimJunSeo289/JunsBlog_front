@@ -60,8 +60,10 @@ export const UserPage = () => {
             <strong>가입일:</strong> {formatDate(userData.createdAt)}
           </p>
           {isCurrentUser && (
-            <div className={css.editButton}>
-              <Link to={``}>내 정보 수정</Link>
+            <div>
+              <Link to={`/update-profile`} className={css.editButton}>
+                내 정보 수정
+              </Link>
             </div>
           )}
         </div>
