@@ -26,3 +26,11 @@
   border-radius: 1em;
   align-self: center;
 }
+
+.socialLogin {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 24px;
+  gap: 12px;
+}

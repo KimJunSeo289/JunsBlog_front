@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../apis/userApi'
 import { setUserInfo } from '../store/userSlice'
+import KakaoLoginButton from '../components/KakaoLoginButton'
 
 export const LoginPage = () => {
   const [username, setUsername] = useState('')
@@ -104,6 +105,11 @@ export const LoginPage = () => {
         <strong>{errPassword}</strong>
         <button type="submit">로그인</button>
       </form>
+
+      <div className={css.socialLogin}>
+        <p>소셜 계정으로 로그인</p>
+        <KakaoLoginButton />
+      </div>
     </main>
   )
 }
