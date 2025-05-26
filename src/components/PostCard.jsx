@@ -17,7 +17,11 @@ export default function PostCard({ post }) {
   return (
     <article className={css.postcard} onClick={handleDetail}>
       <div className={css.post_img}>
-        <img src={`${import.meta.env.VITE_BACK_URL}/${post.cover}`} alt={post.title} />
+        {!post.cover ? (
+          <img src={'/src/assets/noImage.jpeg'} alt={'noImage'}></img>
+        ) : (
+          <img src={`${import.meta.env.VITE_BACK_URL}/${post.cover}`} alt={post.title} />
+        )}
       </div>
       <h3 className={css.title}>{post.title}</h3>
 

@@ -2,7 +2,19 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  color: #1f2937;
 }
+
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #e5e7eb;
+  --primary-color2: rgb(209, 241, 250);
+}
+
+main {
+  background-color: #ffffff;
+}
+
 a {
   text-decoration: none;
   color: inherit;

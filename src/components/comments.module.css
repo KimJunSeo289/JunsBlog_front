@@ -12,7 +12,17 @@
   cursor: pointer;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  background-color: #eaeaea;
+  background-color: lightgray;
+}
+
+.comments button {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.comments button:hover {
+  background-color: grey;
+  color: white;
 }
 
 .list {
@@ -20,11 +30,27 @@
   border-bottom: 1px dotted #ccc;
 }
 
+.list button {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.list button:hover {
+  background-color: grey;
+  color: white;
+}
+
 .commnet {
   font-size: 0.75rem;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.meta {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .author {
@@ -48,18 +74,23 @@
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+  margin-top: 8px;
 }
 .btns button {
   cursor: pointer;
   font-size: 0.7rem;
   padding: 0.25rem 0.75rem;
   border-radius: 0.5rem;
-  background-color: #eaeaea;
+  background-color: lightgray;
 }
 .logMessage {
   padding: 1rem 0.5rem;
   border-radius: 1rem;
   text-align: center;
-  background-color: #eaeaea;
+  background-color: lightgray;
   margin: 1rem 0;
+}
+
+.logMessage :nth-child(2){
+  color: red;
 }

@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #eaeaea;
+  background-color: #3b82f6;
   padding: 0.5rem;
   position: relative;
 }
@@ -11,7 +11,6 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background-color: #999;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -21,11 +20,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.hamburger:hover {
+  transform: scale(1.05);
 }
 
 .hamburger svg {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
 
 .gnbCon {
@@ -55,6 +61,17 @@
   z-index: 95;
 }
 
+.gnbContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gnbContent button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
 .hamburger.active + .gnbCon {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
@@ -81,4 +98,5 @@
 .name {
   position: absolute;
   right: 60px;
+  font-weight: bold;
 }

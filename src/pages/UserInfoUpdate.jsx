@@ -75,7 +75,7 @@ export const UserInfoUpdate = () => {
   }
 
   const handleCancel = () => {
-    navigate(`/user/${user.username}`)
+    navigate(`/mypage/${user.username}`)
   }
 
   if (!user) return null

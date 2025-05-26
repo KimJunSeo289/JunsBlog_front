@@ -46,19 +46,20 @@ export const PostDetailPage = () => {
 
   return (
     <main className={css.postdetailpage}>
-      <h2>블로그 상세 페이지</h2>
+      <h3>{postInfo?.title}</h3>
+      <div className={css.info}>
+        <Link to={`/mypage/${postInfo?.author}`} className={css.author}>
+          {postInfo?.author}
+        </Link>
+        <p className={css.date}>작성일 : {formatDate(postInfo?.updatedAt)}</p>
+        <p>
+          {postInfo && <LikeButton postId={postId} likes={postInfo.likes} />}{' '}
+          <span style={{ marginLeft: '10px' }}>💬 {commentCount}</span>
+        </p>
+      </div>
       <section>
         <div className={css.detailimg}>
           <img src={`${import.meta.env.VITE_BACK_URL}/${postInfo?.cover}`} alt="" />
-          <h3>{postInfo?.title}</h3>
-        </div>
-        <div className={css.info}>
-          <p className={css.author}>{postInfo?.author}</p>
-          <p className={css.date}>{formatDate(postInfo?.updatedAt)}</p>
-          <p>
-            {postInfo && <LikeButton postId={postId} likes={postInfo.likes} />}{' '}
-            <span style={{ marginLeft: '10px' }}>💬 {commentCount}</span>
-          </p>
         </div>
         <div className={css.summary}>{postInfo?.summary}</div>
         {/* Quill 에디터로 작성된 HTML 콘텐츠를 렌더링 */}

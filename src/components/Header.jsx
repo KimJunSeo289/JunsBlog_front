@@ -73,17 +73,20 @@ export const Header = () => {
   return (
     <header className={css.header}>
       <h1>
-        <Link to={'/'}>TOKTOKLOG</Link>
+        <Link to={'/'}>Jun's Blog</Link>
       </h1>
       <p className={css.name}>{username}</p>
       <Hamburger isMenuActive={isMenuActive} toggleMenu={toggleMenu} />
       <nav className={css.gnbCon} onClick={handleBackgroundClick}>
         <div className={css.gnb} onClick={handleGnbClick}>
           {username ? (
-            <>
+            <div className={css.gnbContent}>
               <MenuLike to="/createPost" label="글쓰기" closeMenu={closeMenu} />
+              <MenuLike to={`/mypage/${username}`} label="내정보" closeMenu={closeMenu}>
+                내 정보
+              </MenuLike>
               <button onClick={handleLogout}>로그아웃</button>
-            </>
+            </div>
           ) : (
             <>
               <MenuLike to="/register" label="회원가입" closeMenu={closeMenu} />

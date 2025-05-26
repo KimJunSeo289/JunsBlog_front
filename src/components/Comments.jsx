@@ -119,8 +119,12 @@ export const Comments = ({ postId, onCommentCountChange }) => {
     return (
       <li key={comment._id} className={css.list}>
         <div className={css.commnet}>
-          <p className={css.author}>{comment.author}</p>
-          <p className={css.date}>{formatDate(comment.createdAt)}</p>
+          <div className={css.meta}>
+            <Link to={`/mypage/${comment?.author}`} className={css.author}>
+              {comment?.author}
+            </Link>
+            <p className={css.date}>{formatDate(comment.createdAt)}</p>
+          </div>
 
           {isEditing ? (
             <textarea

@@ -1,6 +1,47 @@
 .postList {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  margin: 12px;
+}
+
+.noPostMessage {
+  margin-top: 24px;
+  padding: 120px;
+  text-align: center;
+  background-color: rgb(229, 230, 230);
+  border-radius: 4px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.writeBtn {
+  border-radius: 4px;
+  background-color: var(--secondary-color);
+  padding: 8px;
+  margin-top: 12px;
+  margin-left: 12px;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+    font-weight: bold;
+}
+
+.writeBtn:hover {
+  background-color: #89898a;
+  font: bold;
+  transform: scale(1.05);
+}
+
+.sortSelect {
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #cecdcd;
+  margin-top: 12px;
+  margin-right: 12px;
 }
