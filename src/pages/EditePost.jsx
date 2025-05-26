@@ -140,7 +140,7 @@ export const EditePost = () => {
           </>
         )}
 
-        <label htmlFor="content">내용</label>
+        <label htmlFor="content" />
         <div className={css.editorWrapper}>
           <QuillEditor
             value={content}

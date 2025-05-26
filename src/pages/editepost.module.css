@@ -1,8 +1,8 @@
 .editepost {
   padding: 0 1rem;
 }
-.editepost h2 h2 {
-  padding-bottom: 2rem;
+.editepost h2 {
+  padding: 2rem 0;
 }
 .writecon {
   display: flex;
@@ -36,6 +36,9 @@
 }
 .writecon .smallimg img {
   width: 100px;
+}
+.writecon :nth-child(6){
+  padding: 0.5rem 0;
 }
 
 .editorWrapper {
