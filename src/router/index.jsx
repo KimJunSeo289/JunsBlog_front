@@ -8,6 +8,7 @@ import { PostDetailPage } from '../pages/PostDetailPage'
 import { EditePost } from '../pages/EditePost'
 import { UserPage } from '../pages/UserPage'
 import { UserInfoUpdate } from '../pages/UserInfoUpdate'
+import { KakaoCallbackPage } from '../components/KakaoCallbackPage'
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: '/update-profile',
         element: <UserInfoUpdate />,
+      },
+      {
+        path: '/auth/kakao/callback',
+        element: <KakaoCallbackPage />,
       },
     ],
   },

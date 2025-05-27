@@ -14,14 +14,18 @@ export const CreatePost = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const user = useSelector(state => state.user.user)
+  const user = useSelector(state => state.user?.user)
+  const isAuthChecked = useSelector(state => state.user?.isAuthChecked)
 
   useEffect(() => {
-    if (!user || !user.username) {
+    if (isAuthChecked && (!user || !user.username)) {
       navigate('/login')
     }
-  }, [user, navigate])
+  }, [isAuthChecked, user, navigate])
 
+  if (!isAuthChecked) {
+    return <div>로그인 상태를 확인 중입니다...</div>
+  }
   const handleContentChange = content => {
     setContent(content)
   }

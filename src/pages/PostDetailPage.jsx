@@ -10,7 +10,6 @@ import Modal from '../components/Modal'
 
 export const PostDetailPage = () => {
   const { postId } = useParams()
-  const username = useSelector(state => state.user.user.username)
   const [postInfo, setPostInfo] = useState({})
   const [commentCount, setCommentCount] = useState(0)
 
@@ -18,6 +17,9 @@ export const PostDetailPage = () => {
   const [isAlertOpen, setAlertOpen] = useState(false)
   const [alertContent, setAlertContent] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
+
+  const user = useSelector(state => state.user?.user)
+  const isAuthChecked = useSelector(state => state.user?.isAuthChecked)
 
   const navigate = useNavigate()
 
@@ -33,6 +35,10 @@ export const PostDetailPage = () => {
     }
     fetchPostDetail()
   }, [postId])
+
+  if (!isAuthChecked) {
+    return <div>로그인 상태를 확인 중입니다...</div>
+  }
 
   const updateCommentCount = count => {
     setCommentCount(count)
@@ -95,7 +101,7 @@ export const PostDetailPage = () => {
 
       <section className={css.btns}>
         {/* 로그인한 사용자만 글을 수정, 삭제할 수 있습니다. */}
-        {username === postInfo?.author && (
+        {user?.username === postInfo?.author && (
           <>
             <Link to={`/edit/${postId}`}>수정</Link>
             <button onClick={openConfirm} disabled={isDeleting}>

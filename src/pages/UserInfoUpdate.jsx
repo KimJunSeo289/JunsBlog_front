@@ -12,15 +12,21 @@ export const UserInfoUpdate = () => {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
 
-  const user = useSelector(state => state.user.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const user = useSelector(state => state.user?.user)
+  const isAuthChecked = useSelector(state => state.user?.isAuthChecked)
+
   useEffect(() => {
-    if (!user) {
+    if (isAuthChecked && !user) {
       navigate('/login', { replace: true })
     }
-  }, [user, navigate])
+  }, [isAuthChecked, user, navigate])
+
+  if (!isAuthChecked) {
+    return <div>로그인 상태를 확인 중입니다...</div>
+  }
 
   const handlePasswordChange = e => {
     setPassword(e.target.value)
