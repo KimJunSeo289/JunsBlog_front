@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { registerUser } from '../apis/userApi'
 import Modal from '../components/Modal'
 import css from './registerpage.module.css'
+import KakaoLoginButton from '../components/KakaoLoginButton'
 
 export const RegisterPage = () => {
   const [username, setUsername] = useState('')
@@ -144,6 +145,11 @@ export const RegisterPage = () => {
           {isSubmitting ? '등록중...' : '가입하기'}
         </button>
       </form>
+
+      <div className={css.socialLogin}>
+        <p>소셜 계정으로 회원가입</p>
+        <KakaoLoginButton />
+      </div>
 
       <Modal
         isOpen={isModalOpen}
