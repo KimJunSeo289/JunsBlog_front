@@ -39,8 +39,7 @@ export const PostListPage = () => {
     const fetchPostList = async () => {
       try {
         if (page > 0) setIsLoading(true)
-
-        const data = await getPostList(page, sortOption)
+        const data = await getPostList(page, 3, sortOption)
 
         setPostList(prev => (page === 0 ? data.posts : [...prev, ...data.posts]))
         setHasMore(data.hasMore)
@@ -52,7 +51,7 @@ export const PostListPage = () => {
       }
     }
     fetchPostList()
-  }, [page])
+  }, [page, sortOption])
 
   const handleWrite = () => {
     if (!user) {
