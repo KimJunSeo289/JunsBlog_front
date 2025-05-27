@@ -93,6 +93,7 @@
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  transition: 0.3s;
 }
 .modalBtnConfirm {
   background: var(--primary-color, #2563eb);
@@ -101,4 +102,15 @@
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.modalBtnCancel:hover{
+  background-color: #aaaaaa;
+  color: white;
+}
+
+.modalBtnConfirm:hover{
+  background: #1557e6;
+  color: rgb(255, 255, 255);
 }

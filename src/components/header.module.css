@@ -65,6 +65,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 8px;
 }
 
 .gnbContent button {
@@ -87,6 +88,14 @@
   padding: 0.5rem 1rem;
   text-decoration: none;
   color: #333;
+  transition: 0.3s;
+  border-radius: 30px;
+}
+
+.gnb a:hover {
+  background-color: #aaaaaa;
+  border-radius: 30px;
+  color: white;
 }
 
 .gnb a.active {

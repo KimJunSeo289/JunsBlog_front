@@ -103,8 +103,10 @@ export const Header = () => {
             </div>
           ) : (
             <>
-              <MenuLike to="/register" label="회원가입" closeMenu={closeMenu} />
-              <MenuLike to="/login" label="로그인" closeMenu={closeMenu} />
+              <div className={css.gnbContent}>
+                <MenuLike to="/register" label="회원가입" closeMenu={closeMenu} />
+                <MenuLike to="/login" label="로그인" closeMenu={closeMenu} />
+              </div>
             </>
           )}
         </div>

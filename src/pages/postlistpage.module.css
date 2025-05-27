@@ -29,11 +29,12 @@
   transition:
     transform 0.2s ease,
     background-color 0.2s ease;
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .writeBtn:hover {
-  background-color: #89898a;
+  background-color: grey;
+  color: white;
   font: bold;
   transform: scale(1.05);
 }
