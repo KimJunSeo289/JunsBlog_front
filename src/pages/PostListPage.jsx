@@ -41,7 +41,6 @@ export const PostListPage = () => {
         if (page > 0) setIsLoading(true)
 
         const data = await getPostList(page, sortOption)
-        console.log('목록조회 성공', data)
 
         setPostList(prev => (page === 0 ? data.posts : [...prev, ...data.posts]))
         setHasMore(data.hasMore)

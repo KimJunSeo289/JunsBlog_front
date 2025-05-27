@@ -28,8 +28,6 @@ export const CreatePost = () => {
 
   const handleCreatePost = async e => {
     e.preventDefault()
-    console.log('제출')
-    console.log(files)
 
     setIsSubmitting(true)
     setError('')
@@ -51,7 +49,6 @@ export const CreatePost = () => {
 
     try {
       await createPost(data)
-      console.log('등록성공')
 
       setIsSubmitting(false)
       navigate('/')

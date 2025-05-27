@@ -14,7 +14,6 @@ export const Header = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user.user)
   const username = user?.username
-  console.log(username)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

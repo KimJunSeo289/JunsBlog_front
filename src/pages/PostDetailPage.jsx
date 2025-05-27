@@ -25,7 +25,6 @@ export const PostDetailPage = () => {
     const fetchPostDetail = async () => {
       try {
         const data = await getPostDetail(postId)
-        console.log(data)
         setPostInfo(data)
         setCommentCount(data.commentCount || 0)
       } catch (error) {
