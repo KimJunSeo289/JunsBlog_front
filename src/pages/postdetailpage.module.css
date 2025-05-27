@@ -70,7 +70,16 @@
   cursor: pointer;
   transition: 0.3s;
 }
+.btns button {
+  background-color: lightgray;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
 .btns a:hover,
+.btns button:hover,
 .btns span:hover {
   background-color: grey;
   color: white;

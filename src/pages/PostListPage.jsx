@@ -3,18 +3,22 @@ import PostCard from '../components/PostCard'
 import css from './postlistpage.module.css'
 import { getPostList } from '../apis/postApi'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import Modal from '../components/Modal'
 
 export const PostListPage = () => {
   const [postList, setPostList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [sortOption, setSortOption] = useState('createdAt')
-
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalContent, setModalContent] = useState('')
   const listRef = useRef(null)
   const observer = useRef()
   const navigate = useNavigate()
+  const user = useSelector(state => state.user.user)
 
   const lastPostElementRef = useCallback(
     node => {
@@ -52,6 +56,11 @@ export const PostListPage = () => {
   }, [page])
 
   const handleWrite = () => {
+    if (!user) {
+      setModalContent('로그인이 필요합니다.')
+      setModalOpen(true)
+      return
+    }
     navigate('/createPost')
   }
 
@@ -94,6 +103,19 @@ export const PostListPage = () => {
           ))}
         </ul>
       )}
+
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        title="알림"
+        content={modalContent}
+        onlyConfirm
+        confirmText="확인"
+        onConfirm={() => {
+          setModalOpen(false)
+          navigate('/login')
+        }}
+      />
     </main>
   )
 }

@@ -1,0 +1,104 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+}
+
+.modalContent {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes slideDownOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeOutOverlay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modalOverlayAfterOpen {
+  animation: fadeInOverlay 0.3s ease-out forwards;
+}
+.modalOverlayBeforeClose {
+  animation: fadeOutOverlay 0.3s ease-in forwards;
+}
+
+.modalContentAfterOpen {
+  animation: slideUpIn 0.3s ease-out forwards;
+}
+.modalContentBeforeClose {
+  animation: slideDownOut 0.3s ease-in forwards;
+}
+
+.modalHeader h2 {
+  margin: 0 0 0.5rem;
+  padding: 1rem 0;
+}
+.modalBody {
+  margin-bottom: 2.5rem;
+}
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.modalBtnCancel {
+  background: #eee;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.modalBtnConfirm {
+  background: var(--primary-color, #2563eb);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}

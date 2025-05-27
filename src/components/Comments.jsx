@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { createComment, getComments, deleteComment, updateComment } from '../apis/commentApi'
 import { formatDate } from '../utils/features'
 import css from './comments.module.css'
+import Modal from './Modal'
 
 export const Comments = ({ postId, onCommentCountChange }) => {
   const userInfo = useSelector(state => state.user.user)
@@ -11,6 +12,16 @@ export const Comments = ({ postId, onCommentCountChange }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [comments, setComments] = useState([])
   const [editState, setEditState] = useState({ id: null, content: '' })
+
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    content: '',
+    onConfirm: null,
+  })
+  const [alertModal, setAlertModal] = useState({
+    isOpen: false,
+    content: '',
+  })
 
   const fetchComments = useCallback(async () => {
     try {
@@ -32,7 +43,7 @@ export const Comments = ({ postId, onCommentCountChange }) => {
   const handleSubmit = async e => {
     e.preventDefault()
     if (!newComment.trim()) {
-      alert('댓글을 입력하세요')
+      setAlertModal({ isOpen: true, content: '댓글을 입력하세요.' })
       return
     }
 
@@ -54,30 +65,32 @@ export const Comments = ({ postId, onCommentCountChange }) => {
       }
     } catch (error) {
       console.error('댓글 등록 실패:', error)
-      alert('댓글 등록에 실패했습니다.')
+      setAlertModal({ isOpen: true, content: '댓글 등록에 실패했습니다.' })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleDelete = async commentId => {
-    if (!window.confirm('정말 삭제하시겠습니까?')) return
-
-    try {
-      setIsLoading(true)
-      await deleteComment(commentId)
-      const updatedComments = comments.filter(comment => comment._id !== commentId)
-      setComments(updatedComments)
-
-      if (onCommentCountChange) {
-        onCommentCountChange(updatedComments.length)
-      }
-    } catch (error) {
-      console.error('댓글 삭제 실패:', error)
-      alert('댓글 삭제에 실패했습니다.')
-    } finally {
-      setIsLoading(false)
-    }
+  const openDeleteConfirm = commentId => {
+    setConfirmModal({
+      isOpen: true,
+      content: '정말 삭제하시겠습니까?',
+      onConfirm: async () => {
+        setConfirmModal(modal => ({ ...modal, isOpen: false }))
+        setIsLoading(true)
+        try {
+          await deleteComment(commentId)
+          const updated = comments.filter(c => c._id !== commentId)
+          setComments(updated)
+          onCommentCountChange?.(updated.length)
+        } catch (error) {
+          console.error('댓글 삭제 실패:', error)
+          setAlertModal({ isOpen: true, content: '댓글 삭제에 실패했습니다.' })
+        } finally {
+          setIsLoading(false)
+        }
+      },
+    })
   }
 
   const handleEditMode = comment => {
@@ -90,23 +103,19 @@ export const Comments = ({ postId, onCommentCountChange }) => {
 
   const handleUpdateComment = async commentId => {
     if (!editState.content.trim()) {
-      alert('댓글 내용을 입력하세요')
+      setAlertModal({ isOpen: true, content: '수정할 내용을 입력하세요.' })
       return
     }
-
     try {
       setIsLoading(true)
       await updateComment(commentId, editState.content)
-
-      setComments(prevComments =>
-        prevComments.map(comment =>
-          comment._id === commentId ? { ...comment, content: editState.content } : comment
-        )
+      setComments(prev =>
+        prev.map(c => (c._id === commentId ? { ...c, content: editState.content } : c))
       )
       handleCancelEdit()
     } catch (error) {
       console.error('댓글 수정 실패:', error)
-      alert('댓글 수정에 실패했습니다.')
+      setAlertModal({ isOpen: true, content: '댓글 수정에 실패했습니다.' })
     } finally {
       setIsLoading(false)
     }
@@ -151,7 +160,7 @@ export const Comments = ({ postId, onCommentCountChange }) => {
           isAuthor && (
             <div className={css.btns}>
               <button onClick={() => handleEditMode(comment)}>수정</button>
-              <button onClick={() => handleDelete(comment._id)}>삭제</button>
+              <button onClick={() => openDeleteConfirm(comment._id)}>삭제</button>
             </div>
           )
         )}
@@ -188,6 +197,27 @@ export const Comments = ({ postId, onCommentCountChange }) => {
           </li>
         )}
       </ul>
+
+      <Modal
+        isOpen={confirmModal.isOpen}
+        onRequestClose={() => setConfirmModal(m => ({ ...m, isOpen: false }))}
+        title="확인"
+        content={confirmModal.content}
+        confirmText="예"
+        cancelText="아니오"
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal(m => ({ ...m, isOpen: false }))}
+      />
+
+      <Modal
+        isOpen={alertModal.isOpen}
+        onRequestClose={() => setAlertModal(a => ({ ...a, isOpen: false }))}
+        title="알림"
+        content={alertModal.content}
+        onlyConfirm
+        confirmText="확인"
+        onConfirm={() => setAlertModal(a => ({ ...a, isOpen: false }))}
+      />
     </section>
   )
 }

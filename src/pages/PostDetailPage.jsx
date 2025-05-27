@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import css from './postdetailpage.module.css'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
@@ -6,12 +6,20 @@ import { formatDate } from '../utils/features'
 import { deletePost, getPostDetail } from '../apis/postApi'
 import { LikeButton } from '../components/LikeButton'
 import { Comments } from '../components/Comments'
+import Modal from '../components/Modal'
 
 export const PostDetailPage = () => {
   const { postId } = useParams()
   const username = useSelector(state => state.user.user.username)
   const [postInfo, setPostInfo] = useState({})
   const [commentCount, setCommentCount] = useState(0)
+
+  const [isConfirmOpen, setConfirmOpen] = useState(false)
+  const [isAlertOpen, setAlertOpen] = useState(false)
+  const [alertContent, setAlertContent] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchPostDetail = async () => {
@@ -31,16 +39,28 @@ export const PostDetailPage = () => {
     setCommentCount(count)
   }
 
-  const handleDeletePost = async () => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      try {
-        await deletePost(postId)
-        alert('삭제되었습니다.')
-        window.location.href = '/'
-      } catch (error) {
-        console.error('글 삭제 실패:', error)
-        alert('삭제에 실패했습니다.')
-      }
+  const openConfirm = () => setConfirmOpen(true)
+  const closeConfirm = () => setConfirmOpen(false)
+
+  const handleDelete = async () => {
+    closeConfirm()
+    setIsDeleting(true)
+    try {
+      await deletePost(postId)
+      setAlertContent('글이 삭제되었습니다.')
+      setAlertOpen(true)
+    } catch (error) {
+      console.error('글 삭제 실패:', error)
+      setAlertContent('삭제에 실패했습니다. 다시 시도해주세요.')
+      setAlertOpen(true)
+      setIsDeleting(false)
+    }
+  }
+
+  const closeAlert = () => {
+    setAlertOpen(false)
+    if (alertContent.includes('삭제되었습니다')) {
+      navigate('/', { replace: true })
     }
   }
 
@@ -79,7 +99,9 @@ export const PostDetailPage = () => {
         {username === postInfo?.author && (
           <>
             <Link to={`/edit/${postId}`}>수정</Link>
-            <span onClick={handleDeletePost}>삭제</span>
+            <button onClick={openConfirm} disabled={isDeleting}>
+              {isDeleting ? '처리 중...' : '삭제'}
+            </button>
           </>
         )}
         <Link to="/">목록으로</Link>
@@ -90,6 +112,28 @@ export const PostDetailPage = () => {
         postId={postId}
         commentCount={commentCount}
         onCommentCountChange={updateCommentCount}
+      />
+
+      <Modal
+        isOpen={isConfirmOpen}
+        onRequestClose={closeConfirm}
+        title="글 삭제"
+        content="정말 삭제하시겠습니까?"
+        confirmText="예"
+        cancelText="아니오"
+        onConfirm={handleDelete}
+        onCancel={closeConfirm}
+      />
+
+      {/* 삭제 결과 알림 모달 */}
+      <Modal
+        isOpen={isAlertOpen}
+        onRequestClose={closeAlert}
+        title="알림"
+        content={alertContent}
+        onlyConfirm
+        confirmText="확인"
+        onConfirm={closeAlert}
       />
     </main>
   )

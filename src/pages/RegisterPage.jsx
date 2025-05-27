@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import css from './registerpage.module.css'
 import { useNavigate } from 'react-router-dom'
 import { registerUser } from '../apis/userApi'
+import Modal from '../components/Modal'
+import css from './registerpage.module.css'
 
 export const RegisterPage = () => {
   const [username, setUsername] = useState('')
@@ -10,8 +11,12 @@ export const RegisterPage = () => {
   const [errUsername, setErrUsername] = useState('')
   const [errPassword, setErrPassword] = useState('')
   const [errPasswordOk, setErrPasswordOk] = useState('')
+  const [isModalOpen, setModalOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState('')
+  const [modalContent, setModalContent] = useState('')
+  const [modalOnlyConfirm, setModalOnlyConfirm] = useState(true)
 
-  const [registerState, setRegisterState] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
 
   const validateUsername = value => {
@@ -40,7 +45,7 @@ export const RegisterPage = () => {
 
   const validatePasswordCheck = (value, current = password) => {
     if (!value) {
-      setErrPasswordOk(' ')
+      setErrPasswordOk('')
       return
     }
     if (value !== current) {
@@ -51,58 +56,65 @@ export const RegisterPage = () => {
   }
 
   const handleUsernameChange = e => {
-    const value = e.target.value
-    setUsername(value)
-    validateUsername(value)
+    const v = e.target.value
+    setUsername(v)
+    validateUsername(v)
   }
-
   const handlePasswordChange = e => {
-    const value = e.target.value
-    setPassword(value)
-    validatePassword(value)
+    const v = e.target.value
+    setPassword(v)
+    validatePassword(v)
+  }
+  const handlePasswordOkChange = e => {
+    const v = e.target.value
+    setPasswordOk(v)
+    validatePasswordCheck(v, password)
   }
 
-  const handlePasswordOkChange = e => {
-    const value = e.target.value
-    setPasswordOk(value)
-    validatePasswordCheck(value)
+  const closeModal = () => {
+    setModalOpen(false)
+    if (modalTitle === '회원가입 성공') {
+      navigate('/login')
+    }
   }
 
   const register = async e => {
     e.preventDefault()
-    console.log('회원가입', username, password, passwordOk)
     validateUsername(username)
     validatePassword(password)
     validatePasswordCheck(passwordOk, password)
 
     if (errUsername || errPassword || errPasswordOk || !username || !password || !passwordOk) {
+      setModalTitle('입력 오류')
+      setModalContent('모든 항목을 올바르게 입력해주세요.')
+      setModalOnlyConfirm(true)
+      setModalOpen(true)
       return
     }
 
     try {
-      setRegisterState('등록중')
-
-      const response = await registerUser({
-        username,
-        password,
-      })
-      console.log('회원가입 성공', response.data)
-
-      setRegisterState('등록완료')
-      navigate('/login')
+      setIsSubmitting(true)
+      await registerUser({ username, password })
+      setModalTitle('회원가입 성공')
+      setModalContent('회원가입이 완료되었습니다.')
+      setModalOnlyConfirm(true)
+      setModalOpen(true)
     } catch (err) {
-      setRegisterState('회원가입 실패')
-      if (err.response) {
-        console.log('오류 응답 데이터 --', err.response.data)
-      }
+      console.error(err.response?.data || err)
+      setModalTitle('회원가입 실패')
+      setModalContent(
+        err.response?.data?.message ||
+          '중복되는 이메일 혹은 알 수 없는 오류로 회원가입에 실패하였습니다.'
+      )
+      setModalOnlyConfirm(true)
+      setModalOpen(true)
+      setIsSubmitting(false)
     }
   }
 
   return (
     <main className={css.registerpage}>
       <h2>회원가입 페이지</h2>
-      {/*  */}
-      {registerState && <strong>{registerState}</strong>}
       <form className={css.container} onSubmit={register}>
         <input
           type="text"
@@ -111,6 +123,7 @@ export const RegisterPage = () => {
           onChange={handleUsernameChange}
         />
         <strong>{errUsername}</strong>
+
         <input
           type="password"
           placeholder="패스워드"
@@ -118,6 +131,7 @@ export const RegisterPage = () => {
           onChange={handlePasswordChange}
         />
         <strong>{errPassword}</strong>
+
         <input
           type="password"
           placeholder="패스워드 확인"
@@ -125,8 +139,21 @@ export const RegisterPage = () => {
           onChange={handlePasswordOkChange}
         />
         <strong>{errPasswordOk}</strong>
-        <button type="submit">가입하기</button>
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? '등록중...' : '가입하기'}
+        </button>
       </form>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        title={modalTitle}
+        content={modalContent}
+        onlyConfirm={modalOnlyConfirm}
+        confirmText="확인"
+        onConfirm={closeModal}
+      />
     </main>
   )
 }

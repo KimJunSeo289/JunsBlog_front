@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../apis/userApi'
 import { setUserInfo } from '../store/userSlice'
 import KakaoLoginButton from '../components/KakaoLoginButton'
+import Modal from '../components/Modal'
 
 export const LoginPage = () => {
   const [username, setUsername] = useState('')
@@ -12,8 +13,12 @@ export const LoginPage = () => {
   const [errUsername, setErrUsername] = useState('')
   const [errPassword, setErrPassword] = useState('')
 
-  const [loginStatus, setLoginStatus] = useState('')
   const [redirect, setRedirect] = useState(false)
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState('알림')
+  const [modalContent, setModalContent] = useState('')
+  const [onlyConfirm, setOnlyConfirm] = useState(true)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -51,35 +56,55 @@ export const LoginPage = () => {
     setPassword(value)
     validatePassword(value)
   }
+
+  const closeModal = () => {
+    setModalOpen(false)
+    if (modalTitle === '로그인 성공') {
+      navigate('/')
+    }
+  }
+
   const login = async e => {
     e.preventDefault()
-    setLoginStatus('')
+
     validateUsername(username)
     validatePassword(password)
-    if (errPassword || errUsername || !username || !password) {
-      setLoginStatus('아이디와 패스워드를 확인하세요.')
+    if (errUsername || errPassword || !username || !password) {
+      setModalTitle('입력 오류')
+      setModalContent('아이디와 패스워드를 확인하세요.')
+      setOnlyConfirm(true)
+      setModalOpen(true)
       return
     }
 
     try {
       const userData = await loginUser({ username, password })
-
-      if (userData)
-        if (userData) {
-          setLoginStatus('로그인 성공')
-          dispatch(setUserInfo(userData))
-          console.log('▶ loginUser response:', userData)
-          setTimeout(() => {
-            setRedirect(true)
-          }, 500)
-        } else {
-          setLoginStatus('사용자가 없습니다.')
-        }
+      if (userData) {
+        setModalTitle('로그인 성공')
+        setModalContent('환영합니다!')
+        setOnlyConfirm(true)
+        setModalOpen(true)
+        dispatch(setUserInfo(userData))
+      }
     } catch (error) {
-      console.error('로그인 오류', error)
-      return
-    } finally {
-      setLoginStatus(false)
+      if (error.response) {
+        const status = error.response.status
+        if (status === 404) {
+          setModalTitle('로그인 실패')
+          setModalContent('존재하지 않는 계정입니다.')
+        } else if (status === 401) {
+          setModalTitle('로그인 실패')
+          setModalContent('아이디 혹은 비밀번호가 틀렸습니다.')
+        } else {
+          setModalTitle('로그인 실패')
+          setModalContent('로그인에 실패했습니다.')
+        }
+      } else {
+        setModalTitle('오류')
+        setModalContent('네트워크 오류가 발생했습니다.')
+      }
+      setOnlyConfirm(true)
+      setModalOpen(true)
     }
   }
 
@@ -92,10 +117,10 @@ export const LoginPage = () => {
   return (
     <main className={css.loginpage}>
       <h2>로그인 페이지</h2>
-      {loginStatus && <strong>{loginStatus}</strong>}
       <form className={css.container} onSubmit={login}>
         <input value={username} onChange={handleUsernameChange} type="text" placeholder="아이디" />
         <strong>{errUsername}</strong>
+
         <input
           value={password}
           onChange={handlePasswordChange}
@@ -103,6 +128,7 @@ export const LoginPage = () => {
           placeholder="패스워드"
         />
         <strong>{errPassword}</strong>
+
         <button type="submit">로그인</button>
       </form>
 
@@ -110,6 +136,18 @@ export const LoginPage = () => {
         <p>소셜 계정으로 로그인</p>
         <KakaoLoginButton />
       </div>
+
+      {/* Modal */}
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={closeModal}
+        title={modalTitle}
+        content={modalContent}
+        onlyConfirm={onlyConfirm}
+        confirmText="확인"
+        onConfirm={closeModal}
+        onCancel={closeModal}
+      />
     </main>
   )
 }

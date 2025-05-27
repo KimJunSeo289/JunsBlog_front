@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
 import { Provider } from 'react-redux'
+import ReactModal from 'react-modal'
 import store from './store/store'
+
+ReactModal.setAppElement('#root')
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

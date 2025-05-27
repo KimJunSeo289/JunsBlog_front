@@ -11,6 +11,7 @@ import {
 } from '../apis/userApi'
 import { formatDate } from '../utils/features'
 import { setUserInfo } from '../store/userSlice'
+import Modal from '../components/Modal'
 
 export const UserPage = () => {
   const { username } = useParams()
@@ -21,6 +22,9 @@ export const UserPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isConfirmOpen, setConfirmOpen] = useState(false)
+  const [isAlertOpen, setAlertOpen] = useState(false)
+  const [alertContent, setAlertContent] = useState('')
 
   const currentUser = useSelector(state => state.user.user)
   const isCurrentUser = currentUser && currentUser.username === username
@@ -52,25 +56,29 @@ export const UserPage = () => {
     fetchUserData()
   }, [username])
 
-  const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      '정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없으며, 모든 계정 정보가 삭제됩니다.'
-    )
+  const openDeleteConfirm = () => setConfirmOpen(true)
+  const closeDeleteConfirm = () => setConfirmOpen(false)
 
-    if (!confirmed) return
-
+  const confirmDeleteAccount = async () => {
+    closeDeleteConfirm()
+    setIsDeleting(true)
     try {
-      setIsDeleting(true)
       await deleteAccount()
-
       dispatch(setUserInfo(''))
-
-      alert('회원 탈퇴가 완료되었습니다.')
-      navigate('/', { replace: true })
-    } catch (error) {
-      console.error('회원 탈퇴 실패:', error)
-      alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.')
+      setAlertContent('회원 탈퇴가 완료되었습니다.')
+      setAlertOpen(true)
+    } catch (err) {
+      console.error('회원 탈퇴 실패:', err)
+      setAlertContent('회원 탈퇴에 실패했습니다. 다시 시도해주세요.')
+      setAlertOpen(true)
       setIsDeleting(false)
+    }
+  }
+
+  const closeAlert = () => {
+    setAlertOpen(false)
+    if (alertContent.includes('완료되었습니다')) {
+      navigate('/', { replace: true })
     }
   }
 
@@ -97,7 +105,7 @@ export const UserPage = () => {
                 내 정보 수정
               </Link>
               <button
-                onClick={handleDeleteAccount}
+                onClick={openDeleteConfirm}
                 className={css.deleteButton}
                 disabled={isDeleting}
               >
@@ -105,6 +113,32 @@ export const UserPage = () => {
               </button>
             </div>
           )}
+
+          <Modal
+            isOpen={isConfirmOpen}
+            onRequestClose={closeDeleteConfirm}
+            title="회원 탈퇴"
+            content={
+              <>
+                <p>정말로 탈퇴하시겠습니까?</p>
+                <p>이 작업은 되돌릴 수 없습니다.</p>
+              </>
+            }
+            confirmText="예"
+            cancelText="아니오"
+            onConfirm={confirmDeleteAccount}
+            onCancel={closeDeleteConfirm}
+          />
+
+          <Modal
+            isOpen={isAlertOpen}
+            onRequestClose={closeAlert}
+            title="알림"
+            content={alertContent}
+            onlyConfirm // 취소 버튼 없이 “확인” 버튼만
+            confirmText="확인"
+            onConfirm={closeAlert}
+          />
         </div>
       </section>
 

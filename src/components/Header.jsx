@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserInfo } from '../store/userSlice'
 import { getUserProfile, logoutUser } from '../apis/userApi'
+import ReactModal from 'react-modal'
+import Modal from './Modal'
 
 export const Header = () => {
   const [isMenuActive, setIsMenuActive] = useState(false)
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false)
 
   const dispatch = useDispatch()
   const user = useSelector(state => state.user.user)
@@ -37,6 +40,7 @@ export const Header = () => {
       await logoutUser()
       dispatch(setUserInfo(''))
       setIsMenuActive(false)
+      setLogoutModalOpen(false)
     } catch (err) {
       console.log('프로필 조회 실패:', err)
       dispatch(setUserInfo(''))
@@ -85,7 +89,18 @@ export const Header = () => {
               <MenuLike to={`/mypage/${username}`} label="내정보" closeMenu={closeMenu}>
                 내 정보
               </MenuLike>
-              <button onClick={handleLogout}>로그아웃</button>
+              <button onClick={() => setLogoutModalOpen(true)}>로그아웃</button>
+
+              <Modal
+                isOpen={isLogoutModalOpen}
+                onRequestClose={() => setLogoutModalOpen(false)}
+                title="로그아웃"
+                content="로그아웃 하시겠습니까?"
+                confirmText="예"
+                cancelText="아니오"
+                onConfirm={handleLogout}
+                onCancel={() => setLogoutModalOpen(false)}
+              />
             </div>
           ) : (
             <>
