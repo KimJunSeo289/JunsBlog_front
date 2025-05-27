@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import css from './postcard.module.css'
 import { formatDate } from '../utils/features'
 import { LikeButton } from './LikeButton'
+import noimage from '../assets/noImage.jpeg'
 
 export default function PostCard({ post }) {
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ export default function PostCard({ post }) {
     <article className={css.postcard} onClick={handleDetail}>
       <div className={css.post_img}>
         {!post.cover ? (
-          <img src={'/src/assets/noImage.jpeg'} alt={'noImage'}></img>
+          <img src={noimage} alt={'noImage'}></img>
         ) : (
           <img src={`${import.meta.env.VITE_BACK_URL}/${post.cover}`} alt={post.title} />
         )}
