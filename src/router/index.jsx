@@ -8,7 +8,7 @@ import { PostDetailPage } from '../pages/PostDetailPage'
 import { EditePost } from '../pages/EditePost'
 import { UserPage } from '../pages/UserPage'
 import { UserInfoUpdate } from '../pages/UserInfoUpdate'
-import { KakaoCallbackPage } from '../components/KakaoCallbackPage'
+import { KakaoCallbackPage } from '../pages/KakaoCallbackPage'
 
 export const router = createBrowserRouter([
   {

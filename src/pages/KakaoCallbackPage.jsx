@@ -11,8 +11,13 @@ export const KakaoCallbackPage = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const fetchKakaoUser = async () => {
+    const handleKakaoLogin = async () => {
       const code = new URLSearchParams(window.location.search).get('code')
+      if (!code) {
+        alert('로그인 코드가 없습니다.')
+        return
+      }
+
       try {
         const res = await axios.get(`${API_URL}/auth/kakao/callback?code=${code}`, {
           withCredentials: true,
@@ -21,11 +26,13 @@ export const KakaoCallbackPage = () => {
         navigate('/')
       } catch (err) {
         console.error('카카오 로그인 실패:', err)
+        alert('카카오 로그인 실패')
         navigate('/login')
       }
     }
-    fetchKakaoUser()
+
+    handleKakaoLogin()
   }, [navigate, dispatch])
 
-  return <div>카카오 로그인 처리 중...</div>
+  return <div>카카오 로그인 처리 중입니다...</div>
 }
