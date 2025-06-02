@@ -1,0 +1,15 @@
+.chatIcon {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  z-index: 1000;
+  background: #fff;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}

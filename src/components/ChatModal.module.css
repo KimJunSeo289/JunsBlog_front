@@ -1,0 +1,170 @@
+/* ChatModal.module.css */
+.overlay {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1002;
+  background: rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.modal {
+  margin: 0 0 72px 32px;
+  background: #fff;
+  border-radius: 24px 24px 0 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  width: 360px;
+  max-width: 95vw;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header {
+  padding: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+.chatBody {
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  font-size: 1rem;
+  background: #f6f7fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+  align-items: flex-start;
+  gap: 2px;
+}
+.mine {
+  align-items: flex-end;
+}
+.others {
+  align-items: flex-start;
+}
+.nickname {
+  font-size: 0.9em;
+  color: #6a707b;
+  margin-bottom: 2px;
+  margin-left: 4px;
+}
+.bubbleWrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+.bubble {
+  background: #ffffff;
+  padding: 10px 16px;
+  border-radius: 16px;
+  max-width: 200px;
+  font-size: 1em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  color: #222;
+  word-break: break-word;
+}
+.mine .bubble {
+  background: var(--primary-color);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+.others .bubble {
+  background: #ffffff;
+  color: #222;
+  border-bottom-left-radius: 2px;
+}
+.time {
+  font-size: 0.78em;
+  color: #8e9297;
+  min-width: 34px;
+  text-align: right;
+  align-self: flex-end;
+  margin-left: 4px;
+}
+
+.form {
+  display: flex;
+  border-top: 1px solid #eee;
+  padding: 12px;
+  gap: 8px;
+  background: #fff;
+}
+.form input {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 1em;
+}
+.form button {
+  padding: 7px 20px;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.form input:disabled,
+.form button:disabled {
+  background: #f2f4f8;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 로그인 모달 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loginModal {
+  background: #fff;
+  padding: 36px 28px;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.11);
+  min-width: 240px;
+}
+.loginModalTitle {
+  font-weight: bold;
+  font-size: 1.13em;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.loginModalButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.loginModalButtons button {
+  padding: 7px 18px;
+  border: none;
+  border-radius: 6px;
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+.loginModalButtons button:last-child {
+  background: #f2f4f8;
+  color: var(--primary-color);
+}
